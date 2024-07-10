@@ -99,9 +99,7 @@ export class ImageScaler {
   }
 
   async scale<T extends ScaleImageParams>(params: T): Promise<InferScaleImageReturnType<T>> {
-    const { imageName, outputType, format = 'webp' } = params;
-
-    if (!imageName) throw new Error('imageName should not be empty');
+    const { outputType, format = 'webp' } = params;
 
     let inputBuffer: Buffer | undefined;
 
@@ -122,6 +120,7 @@ export class ImageScaler {
 
     if (outputType === 'file' && 'outputDir' in params) {
       if (!params.outputDir) throw new Error('outputDir should not be empty');
+      if (!params.imageName) throw new Error('imageName should not be empty');
 
       outputPath = this.generateImagePath({
         imageName: params.imageName,
