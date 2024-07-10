@@ -1,3 +1,6 @@
+// Basic Types
+import { FormatEnum } from 'sharp';
+
 export interface WidthAndHeight {
   width: number;
   height: number;
@@ -7,27 +10,32 @@ export interface WidthHeightAndSize extends WidthAndHeight {
   size: string;
 }
 
-export interface GeneratePostfixParams {
-  format: 'size' | 'wxh';
-  size: WidthHeightAndSize;
-}
-
-export interface WidthHeightAndImageName extends WidthAndHeight {
-  imageName: string;
-}
+export type PostfixFormat = 'size' | 'wxh';
 
 export interface Sizes {
   [x: string]: WidthAndHeight;
 }
 
-export interface ScaleLocalImageBaseParams extends WidthHeightAndImageName {
+// Parameter Types
+export interface GeneratePostfixParams {
+  format: PostfixFormat;
+  widthHeightAndSize: WidthHeightAndSize;
+}
+
+export interface ScaleImageBaseParams extends WidthAndHeight {
+  imageName: string;
+  format?: keyof FormatEnum;
+}
+
+// Local Image Scaling
+export interface ScaleLocalImageBaseParams extends ScaleImageBaseParams {
   filePath: string;
 }
 
 export interface ScaleLocalImageToFileParams extends ScaleLocalImageBaseParams {
   outputDir: string;
   outputType: 'file';
-  postfix?: 'size' | 'wxh';
+  postfix?: PostfixFormat;
 }
 
 export interface ScaleLocalImageToBufferParams extends ScaleLocalImageBaseParams {
@@ -36,14 +44,15 @@ export interface ScaleLocalImageToBufferParams extends ScaleLocalImageBaseParams
 
 export type ScaleLocalImageParams = ScaleLocalImageToFileParams | ScaleLocalImageToBufferParams;
 
-export interface ScaleRemoteImageBaseParams extends WidthHeightAndImageName {
+// Remote Image Scaling
+export interface ScaleRemoteImageBaseParams extends ScaleImageBaseParams {
   url: string;
 }
 
 export interface ScaleRemoteImageToFileParams extends ScaleRemoteImageBaseParams {
   outputDir: string;
   outputType: 'file';
-  postfix?: 'size' | 'wxh';
+  postfix?: PostfixFormat;
 }
 
 export interface ScaleRemoteImageToBufferParams extends ScaleRemoteImageBaseParams {
@@ -52,10 +61,33 @@ export interface ScaleRemoteImageToBufferParams extends ScaleRemoteImageBasePara
 
 export type ScaleRemoteImageParams = ScaleRemoteImageToFileParams | ScaleRemoteImageToBufferParams;
 
+// Combined Scaling Types
 export type ScaleImageParams = ScaleLocalImageParams | ScaleRemoteImageParams;
 
+export type ScaleOrGetExistingParams = ScaleImageParams & { outputDir: string };
+
+// Utility Types
 export type InferScaleImageReturnType<T extends ScaleImageParams> = T extends { outputType: 'file' }
   ? string
   : T extends { outputType: 'buffer' }
     ? Buffer
     : never;
+
+export interface GenerateImagePathParams {
+  outputDir: string;
+  imageName: string;
+  widthHeightAndSize: WidthHeightAndSize;
+  format: string;
+  postfix?: PostfixFormat;
+}
+
+export interface ResizeImageParams {
+  inputBuffer: Buffer;
+  width: number;
+  height: number;
+  format: keyof FormatEnum;
+}
+
+export interface GetPostfixFormatParams {
+  postfix?: PostfixFormat;
+}

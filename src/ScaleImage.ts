@@ -8,6 +8,11 @@ import {
   InferScaleImageReturnType,
   WidthAndHeight,
   GeneratePostfixParams,
+  ScaleOrGetExistingParams,
+  GenerateImagePathParams,
+  ResizeImageParams,
+  GetPostfixFormatParams,
+  PostfixFormat,
 } from './types';
 import { DEFAULT_SIZES } from './constants';
 
@@ -31,19 +36,17 @@ export class ScaleImage {
 
   private async downloadImage(url: string): Promise<Buffer> {
     const response = await fetch(url);
+
     if (!response.ok) {
       throw new Error(`Failed to fetch image from URL: ${url}`);
     }
+
     const arrayBuffer = await response.arrayBuffer();
+
     return Buffer.from(arrayBuffer);
   }
 
-  private async resizeImage(
-    inputBuffer: Buffer,
-    width: number,
-    height: number,
-    format: 'webp' | 'jpeg' | 'png',
-  ): Promise<Buffer> {
+  private async resizeImage({ inputBuffer, width, height, format }: ResizeImageParams): Promise<Buffer> {
     const metadata = await sharp(inputBuffer).metadata();
     const originalWidth = metadata.width!;
     const originalHeight = metadata.height!;
@@ -74,86 +77,86 @@ export class ScaleImage {
     return this.sizes[this.sizes.length - 1];
   }
 
-  private getPostfixFormat(params: { postfix?: 'size' | 'wxh' }): 'size' | 'wxh' {
+  private getPostfixFormat(params: GetPostfixFormatParams): PostfixFormat {
     return params.postfix ?? 'size';
   }
 
   private generatePostfix(params: GeneratePostfixParams): string {
-    if (params.format === 'size') return params.size.size;
+    if (params.format === 'size') return params.widthHeightAndSize.size;
 
-    return `${params.size.width}x${params.size.height}`;
+    return `${params.widthHeightAndSize.width}x${params.widthHeightAndSize.height}`;
   }
 
-  private generateImagePath(params: {
-    outputDir: string;
-    imageName: string;
-    size: WidthHeightAndSize;
-    format: string;
-    postfix?: 'size' | 'wxh';
-  }): string {
+  private generateImagePath(params: GenerateImagePathParams): string {
     const postfixFormat = this.getPostfixFormat(params);
 
     const postfix = this.generatePostfix({
       format: postfixFormat,
-      size: params.size,
+      widthHeightAndSize: params.widthHeightAndSize,
     });
 
     return path.join(params.outputDir, `${params.imageName}-${postfix}.${params.format}`);
   }
 
   async scale<T extends ScaleImageParams>(params: T): Promise<InferScaleImageReturnType<T>> {
-    const { outputType } = params;
+    const { imageName, outputType, format = 'webp' } = params;
 
-    let inputBuffer: Buffer;
+    if (!imageName) throw new Error('imageName should not be empty');
+
+    let inputBuffer: Buffer | undefined;
+
     if ('filePath' in params) {
       inputBuffer = fs.readFileSync(params.filePath);
     } else if ('url' in params) {
       inputBuffer = await this.downloadImage(params.url);
-    } else {
-      throw new Error('Invalid input parameters.');
     }
+
+    if (!inputBuffer) throw new Error('Could not fetch image');
 
     const targetSize = this.selectSize({
       width: params.width,
       height: params.height,
     });
 
-    const format = 'webp';
-
     let outputPath: string | undefined;
-    if (outputType === 'file' && 'outputDir' in params && 'imageName' in params) {
+
+    if (outputType === 'file' && 'outputDir' in params) {
+      if (params.outputDir) throw new Error('outputDir should not be empty');
+
       outputPath = this.generateImagePath({
-        ...params,
-        size: targetSize,
+        imageName: params.imageName,
+        widthHeightAndSize: targetSize,
         format,
         outputDir: params.outputDir,
       });
     }
 
-    const resizedImageBuffer = await this.resizeImage(inputBuffer, targetSize.width, targetSize.height, format);
+    const resizedImageBuffer = await this.resizeImage({
+      inputBuffer,
+      width: targetSize.width,
+      height: targetSize.height,
+      format,
+    });
 
-    if (outputType === 'buffer') {
-      return resizedImageBuffer as InferScaleImageReturnType<T>;
-    } else if (outputPath) {
+    if (outputType === 'file') {
+      if (!outputPath) throw new Error('Could not generate output path');
+
       await sharp(resizedImageBuffer).toFile(outputPath);
 
       return outputPath as InferScaleImageReturnType<T>;
-    } else {
-      throw new Error('Output directory must be provided for file output.');
     }
+
+    return resizedImageBuffer as InferScaleImageReturnType<T>;
   }
 
-  async scaleOrGetExisting<T extends ScaleImageParams & { outputDir: string }>(
-    params: T,
-  ): Promise<InferScaleImageReturnType<T>> {
-    const { outputDir, imageName, width, height, outputType } = params;
+  async scaleOrGetExisting<T extends ScaleOrGetExistingParams>(params: T): Promise<InferScaleImageReturnType<T>> {
+    const { outputDir, imageName, width, height, outputType, format = 'webp' } = params;
 
     const targetSize = this.selectSize({ width, height });
-    const format = 'webp';
 
     const outputPath = this.generateImagePath({
       imageName,
-      size: targetSize,
+      widthHeightAndSize: targetSize,
       format,
       outputDir,
     });
@@ -161,10 +164,9 @@ export class ScaleImage {
     if (fs.existsSync(outputPath)) {
       if (outputType === 'file') {
         return outputPath as InferScaleImageReturnType<T>;
-      } else if (outputType === 'buffer') {
-        const existingBuffer = fs.readFileSync(outputPath);
-        return existingBuffer as InferScaleImageReturnType<T>;
       }
+
+      return fs.readFileSync(outputPath) as InferScaleImageReturnType<T>;
     }
 
     return this.scale(params);
