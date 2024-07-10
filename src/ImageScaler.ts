@@ -16,7 +16,7 @@ import {
 } from './types';
 import { DEFAULT_SIZES } from './constants';
 
-export class ScaleImage {
+export class ImageScaler {
   sizes: WidthHeightAndSize[] = [];
 
   constructor(sizes: Sizes = DEFAULT_SIZES) {

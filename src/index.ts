@@ -1,3 +1,3 @@
-export * from './ScaleImage';
+export * from './ImageScaler';
 export * from './types';
 export * from './constants';

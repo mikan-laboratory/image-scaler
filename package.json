@@ -1,15 +1,18 @@
 {
-  "name": "scale-image",
+  "name": "@mikan-labs/image-scaler",
   "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "husky",
+    "lint": "eslint --ext ts,js .",
+    "fix": "eslint --fix --ext ts,js ."
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Mikan Labs <engineering@mikanlabs.com>",
+  "license": "MIT",
   "description": "",
   "devDependencies": {
     "@types/jest": "^29.5.12",
