@@ -121,7 +121,7 @@ export class ImageScaler {
     let outputPath: string | undefined;
 
     if (outputType === 'file' && 'outputDir' in params) {
-      if (params.outputDir) throw new Error('outputDir should not be empty');
+      if (!params.outputDir) throw new Error('outputDir should not be empty');
 
       outputPath = this.generateImagePath({
         imageName: params.imageName,
