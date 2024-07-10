@@ -70,7 +70,7 @@ export class ImageScaler {
 
   private selectSize(params: WidthAndHeight): WidthHeightAndSize {
     for (const size of this.sizes) {
-      if (size.width <= params.width) {
+      if (params.width <= size.width) {
         return size;
       }
     }
