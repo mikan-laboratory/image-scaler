@@ -12,7 +12,7 @@ export interface GeneratePostfixParams {
   size: WidthHeightAndSize;
 }
 
-export interface WidthHeightSizeAndImageName extends WidthHeightAndSize {
+export interface WidthHeightAndImageName extends WidthAndHeight {
   imageName: string;
 }
 
@@ -20,7 +20,7 @@ export interface Sizes {
   [x: string]: WidthAndHeight;
 }
 
-export interface ScaleLocalImageBaseParams extends WidthHeightSizeAndImageName {
+export interface ScaleLocalImageBaseParams extends WidthHeightAndImageName {
   filePath: string;
 }
 
@@ -36,7 +36,7 @@ export interface ScaleLocalImageToBufferParams extends ScaleLocalImageBaseParams
 
 export type ScaleLocalImageParams = ScaleLocalImageToFileParams | ScaleLocalImageToBufferParams;
 
-export interface ScaleRemoteImageBaseParams extends WidthHeightSizeAndImageName {
+export interface ScaleRemoteImageBaseParams extends WidthHeightAndImageName {
   url: string;
 }
 
