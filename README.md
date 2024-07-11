@@ -8,7 +8,7 @@ Image Scaler is a powerful Node.js package from [Mikan Labs](https://mikanlabs.c
 - Converts images to WebP format for better compression and faster loading times
 - Supports both local and remote images
 - Provides options for custom sizing and output formats
-- Efficient caching mechanism to avoid redundant processing
+- Caching to avoid redundant processing
 
 ## Installation
 
@@ -86,8 +86,13 @@ Parameters:
 - `format` (optional): Output format (default: 'webp')
 - `outputDir` (required for 'file' output): Directory to save the scaled image
 - `imageName` (required for 'file' output): Name for the output file
+- `postfix` (optional for 'file' output): Postfix format for the output filename (default: 'size')
 
-Returns:
+  - Options:
+    - `'size'`: Uses the size name as the postfix (e.g., `image-md.webp`)
+    - `'wxh'`: Uses the actual width and height as the postfix (e.g., `image-800x600.webp`)
+  - This parameter allows you to customize how the scaled images are named, making it easier to identify the dimensions or size category of each image.
+    Returns:
 
 - For 'file' output: Path to the saved file
 - For 'buffer' output: Buffer containing the scaled image
