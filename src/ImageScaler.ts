@@ -50,7 +50,6 @@ export class ImageScaler {
     return sharp(inputBuffer)
       .resize(width, null, {
         withoutEnlargement: true,
-        fit: sharp.fit.contain,
       })
       .toFormat(format)
       .toBuffer();
