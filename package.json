@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikan-laboratory/image-scaler.git"
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
@@ -15,7 +19,7 @@
   "keywords": [],
   "author": "Mikan Labs <engineering@mikanlabs.com>",
   "license": "MIT",
-  "description": "",
+  "description": "Resize and optimize images for various screen resolutions",
   "devDependencies": {
     "@types/http-server": "^0.12.4",
     "@types/jest": "^29.5.12",
