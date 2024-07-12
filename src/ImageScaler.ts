@@ -127,6 +127,7 @@ export class ImageScaler {
         widthHeightAndSize: targetSize,
         format,
         outputDir: params.outputDir,
+        postfix: params.postfix,
       });
     }
 
