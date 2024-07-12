@@ -31,7 +31,6 @@ const scaler = new ImageScaler();
 const scaledLocalImage = await scaler.scale({
   filePath: './path/to/local/image.jpg',
   width: 1920,
-  height: 1080,
   outputType: 'file',
   outputDir: './optimized',
   imageName: 'scaled-image',
@@ -43,7 +42,6 @@ console.log(`Scaled image saved to: ${scaledLocalImage}`);
 const scaledRemoteImage = await scaler.scale({
   url: 'https://example.com/image.jpg',
   width: 800,
-  height: 600,
   outputType: 'buffer',
 });
 
@@ -64,11 +62,11 @@ new ImageScaler(sizes?)
 
 - `sizes` (optional): An object defining custom sizes. If not provided, the following default sizes are used:
   ```javascript
-  small: { width: 640, height: 480 },
-  medium: { width: 1280, height: 720 },
-  large: { width: 1920, height: 1080 },
-  xlarge: { width: 2560, height: 1440 },
-  xxlarge: { width: 3840, height: 2160 },
+  small: { width: 640 },
+  medium: { width: 1280 },
+  large: { width: 1920 },
+  xlarge: { width: 2560 },
+  xxlarge: { width: 3840 },
   ```
 
 #### Methods
@@ -90,7 +88,7 @@ Parameters:
 
   - Options:
     - `'size'`: Uses the size name as the postfix (e.g., `image-md.webp`)
-    - `'wxh'`: Uses the actual width and height as the postfix (e.g., `image-800x600.webp`)
+    - `'w'`: Uses the actual width and height as the postfix (e.g., `image-w=800.webp`)
   - This parameter allows you to customize how the scaled images are named, making it easier to identify the dimensions or size category of each image.
     Returns:
 

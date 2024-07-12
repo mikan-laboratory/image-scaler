@@ -2,22 +2,22 @@ import path from 'path';
 import sharp from 'sharp';
 import fs from 'fs';
 import {
-  WidthHeightAndSize,
   Sizes,
   ScaleImageParams,
   InferScaleImageReturnType,
-  WidthAndHeight,
   GeneratePostfixParams,
   ScaleOrGetExistingParams,
   GenerateImagePathParams,
   ResizeImageParams,
   GetPostfixFormatParams,
   PostfixFormat,
+  WidthAndSize,
+  Width,
 } from './types';
 import { DEFAULT_SIZES } from './constants';
 
 export class ImageScaler {
-  sizes: WidthHeightAndSize[] = [];
+  sizes: WidthAndSize[] = [];
 
   constructor(sizes: Sizes = DEFAULT_SIZES) {
     Object.entries(sizes).forEach(([key, value]) => {
@@ -46,29 +46,17 @@ export class ImageScaler {
     return Buffer.from(arrayBuffer);
   }
 
-  private async resizeImage({ inputBuffer, width, height, format }: ResizeImageParams): Promise<Buffer> {
-    const metadata = await sharp(inputBuffer).metadata();
-    const originalWidth = metadata.width!;
-    const originalHeight = metadata.height!;
-
-    const widthRatio = width / originalWidth;
-    const heightRatio = height / originalHeight;
-    const resizeRatio = Math.min(widthRatio, heightRatio);
-
-    const targetWidth = Math.round(originalWidth * resizeRatio);
-    const targetHeight = Math.round(originalHeight * resizeRatio);
-
-    const resizedImageBuffer = await sharp(inputBuffer)
-      .resize(targetWidth, targetHeight, {
+  private async resizeImage({ inputBuffer, width, format }: ResizeImageParams): Promise<Buffer> {
+    return sharp(inputBuffer)
+      .resize(width, null, {
         withoutEnlargement: true,
+        fit: sharp.fit.contain,
       })
       .toFormat(format)
       .toBuffer();
-
-    return resizedImageBuffer;
   }
 
-  private selectSize(params: WidthAndHeight): WidthHeightAndSize {
+  private selectSize(params: Width): WidthAndSize {
     for (const size of this.sizes) {
       if (params.width <= size.width) {
         return size;
@@ -82,9 +70,9 @@ export class ImageScaler {
   }
 
   private generatePostfix(params: GeneratePostfixParams): string {
-    if (params.format === 'size') return params.widthHeightAndSize.size;
+    if (params.format === 'size') return params.widthAndSize.size;
 
-    return `${params.widthHeightAndSize.width}x${params.widthHeightAndSize.height}`;
+    return `w=${params.widthAndSize.width}`;
   }
 
   private generateImagePath(params: GenerateImagePathParams): string {
@@ -92,7 +80,7 @@ export class ImageScaler {
 
     const postfix = this.generatePostfix({
       format: postfixFormat,
-      widthHeightAndSize: params.widthHeightAndSize,
+      widthAndSize: params.widthAndSize,
     });
 
     return path.join(params.outputDir, `${params.imageName}-${postfix}.${params.format}`);
@@ -113,7 +101,6 @@ export class ImageScaler {
 
     const targetSize = this.selectSize({
       width: params.width,
-      height: params.height,
     });
 
     let outputPath: string | undefined;
@@ -124,7 +111,7 @@ export class ImageScaler {
 
       outputPath = this.generateImagePath({
         imageName: params.imageName,
-        widthHeightAndSize: targetSize,
+        widthAndSize: targetSize,
         format,
         outputDir: params.outputDir,
         postfix: params.postfix,
@@ -134,7 +121,6 @@ export class ImageScaler {
     const resizedImageBuffer = await this.resizeImage({
       inputBuffer,
       width: targetSize.width,
-      height: targetSize.height,
       format,
     });
 
@@ -150,13 +136,13 @@ export class ImageScaler {
   }
 
   async scaleOrGetExisting<T extends ScaleOrGetExistingParams>(params: T): Promise<InferScaleImageReturnType<T>> {
-    const { outputDir, imageName, width, height, outputType, format = 'webp' } = params;
+    const { outputDir, imageName, width, outputType, format = 'webp' } = params;
 
-    const targetSize = this.selectSize({ width, height });
+    const targetSize = this.selectSize({ width });
 
     const outputPath = this.generateImagePath({
       imageName,
-      widthHeightAndSize: targetSize,
+      widthAndSize: targetSize,
       format,
       outputDir,
     });

@@ -1,28 +1,27 @@
 // Basic Types
 import { FormatEnum } from 'sharp';
 
-export interface WidthAndHeight {
+export interface Width {
   width: number;
-  height: number;
 }
 
-export interface WidthHeightAndSize extends WidthAndHeight {
+export interface WidthAndSize extends Width {
   size: string;
 }
 
-export type PostfixFormat = 'size' | 'wxh';
+export type PostfixFormat = 'size' | 'w';
 
 export interface Sizes {
-  [x: string]: WidthAndHeight;
+  [x: string]: Width;
 }
 
 // Parameter Types
 export interface GeneratePostfixParams {
   format: PostfixFormat;
-  widthHeightAndSize: WidthHeightAndSize;
+  widthAndSize: WidthAndSize;
 }
 
-export interface ScaleImageBaseParams extends WidthAndHeight {
+export interface ScaleImageBaseParams extends Width {
   format?: keyof FormatEnum;
 }
 
@@ -77,7 +76,7 @@ export type InferScaleImageReturnType<T extends ScaleImageParams> = T extends { 
 export interface GenerateImagePathParams {
   outputDir: string;
   imageName: string;
-  widthHeightAndSize: WidthHeightAndSize;
+  widthAndSize: WidthAndSize;
   format: string;
   postfix?: PostfixFormat;
 }
@@ -85,7 +84,6 @@ export interface GenerateImagePathParams {
 export interface ResizeImageParams {
   inputBuffer: Buffer;
   width: number;
-  height: number;
   format: keyof FormatEnum;
 }
 

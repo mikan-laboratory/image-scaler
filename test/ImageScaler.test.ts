@@ -43,26 +43,25 @@ describe('ImageScaler (integration tests)', () => {
 
   it('should initialize sizes correctly', () => {
     expect(scaler.sizes).toEqual([
-      { size: 'small', width: 640, height: 480 },
-      { size: 'medium', width: 1280, height: 720 },
-      { size: 'large', width: 1920, height: 1080 },
-      { size: 'xlarge', width: 2560, height: 1440 },
-      { size: 'xxlarge', width: 3840, height: 2160 },
+      { size: 'small', width: 640 },
+      { size: 'medium', width: 1280 },
+      { size: 'large', width: 1920 },
+      { size: 'xlarge', width: 2560 },
+      { size: 'xxlarge', width: 3840 },
     ]);
   });
 
-  it('should create image with wxh postfix', async () => {
+  it('should create image with w postfix', async () => {
     const filePath = await scaler.scale({
       filePath: testImagePath,
       width: 640,
-      height: 480,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
-      postfix: 'wxh',
+      postfix: 'w',
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-${640}x${480}.webp`);
+    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-w=${640}.webp`);
 
     expect(filePath).toBe(expectedPath);
   });
@@ -71,7 +70,6 @@ describe('ImageScaler (integration tests)', () => {
     const filePath = await scaler.scale({
       filePath: testImagePath,
       width: 640,
-      height: 480,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -87,7 +85,6 @@ describe('ImageScaler (integration tests)', () => {
     const filePath = await scaler.scale({
       filePath: testImagePath,
       width: 1280,
-      height: 720,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -100,12 +97,12 @@ describe('ImageScaler (integration tests)', () => {
 
   it('should handle custom sizes', async () => {
     const ALTERNATIVE_SIZES: Sizes = {
-      tiny: { width: 320, height: 240 },
-      small: { width: 800, height: 600 },
-      medium: { width: 1366, height: 768 },
-      large: { width: 1920, height: 1080 },
-      xlarge: { width: 2560, height: 1440 },
-      ultrawide: { width: 3440, height: 1440 },
+      tiny: { width: 320 },
+      small: { width: 800 },
+      medium: { width: 1366 },
+      large: { width: 1920 },
+      xlarge: { width: 2560 },
+      ultrawide: { width: 3440 },
     };
 
     const customScaler = new ImageScaler(ALTERNATIVE_SIZES);
@@ -113,7 +110,6 @@ describe('ImageScaler (integration tests)', () => {
     const filePath = await customScaler.scale({
       filePath: testImagePath,
       width: 3840,
-      height: 2160,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -128,7 +124,6 @@ describe('ImageScaler (integration tests)', () => {
     const result = await scaler.scale({
       filePath: testImagePath,
       width: 640,
-      height: 480,
       outputType: 'buffer',
     });
 
@@ -139,7 +134,6 @@ describe('ImageScaler (integration tests)', () => {
     const result = await scaler.scale({
       filePath: testImagePath,
       width: 640,
-      height: 480,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -156,7 +150,6 @@ describe('ImageScaler (integration tests)', () => {
     const result = await scaler.scale({
       url: testImageURL,
       width: 640,
-      height: 480,
       outputType: 'buffer',
     });
 
@@ -167,7 +160,6 @@ describe('ImageScaler (integration tests)', () => {
     const result = await scaler.scale({
       url: testImageURL,
       width: 640,
-      height: 480,
       outputType: 'file',
       outputDir,
       imageName: TEST_REMOTE_IMAGE_NAME,
@@ -185,7 +177,6 @@ describe('ImageScaler (integration tests)', () => {
     const firstResult = await scaler.scaleOrGetExisting({
       filePath: testImagePath,
       width: 640,
-      height: 480,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -201,7 +192,6 @@ describe('ImageScaler (integration tests)', () => {
     const secondResult = await scaler.scaleOrGetExisting({
       filePath: testImagePath,
       width: 640,
-      height: 480,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -215,7 +205,6 @@ describe('ImageScaler (integration tests)', () => {
     const firstResult = await scaler.scaleOrGetExisting({
       url: testImageURL,
       width: 640,
-      height: 480,
       outputType: 'file',
       outputDir,
       imageName: TEST_REMOTE_IMAGE_NAME,
@@ -231,7 +220,6 @@ describe('ImageScaler (integration tests)', () => {
     const secondResult = await scaler.scaleOrGetExisting({
       url: testImageURL,
       width: 640,
-      height: 480,
       outputType: 'file',
       outputDir,
       imageName: TEST_REMOTE_IMAGE_NAME,
