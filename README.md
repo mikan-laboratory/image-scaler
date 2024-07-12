@@ -23,7 +23,7 @@ npm install @mikan-labs/image-scaler
 Here's a basic example of how to use Image Scaler:
 
 ```javascript
-import { ImageScaler } from 'image-scaler';
+import { ImageScaler } from '@mikan-labs/image-scaler';
 
 const scaler = new ImageScaler();
 
@@ -62,11 +62,14 @@ new ImageScaler(sizes?)
 
 - `sizes` (optional): An object defining custom sizes. If not provided, the following default sizes are used:
   ```javascript
-  small: { width: 640 },
-  medium: { width: 1280 },
-  large: { width: 1920 },
-  xlarge: { width: 2560 },
-  xxlarge: { width: 3840 },
+  xs: { width: 360 }, // Extra small devices (portrait phones)
+  sm: { width: 640 }, // Small devices (landscape phones)
+  md: { width: 768 }, // Medium devices (tablets)
+  lg: { width: 1024 }, // Large devices (desktops)
+  xl: { width: 1366 }, // Extra large devices (large desktops)
+  fhd: { width: 1920 }, // Full HD (1080p monitors)
+  qhd: { width: 2560 }, // Quad HD (2K monitors)
+  uhd: { width: 3840 }, // Ultra HD (4K monitors)
   ```
 
 #### Methods

@@ -43,25 +43,28 @@ describe('ImageScaler (integration tests)', () => {
 
   it('should initialize sizes correctly', () => {
     expect(scaler.sizes).toEqual([
-      { size: 'small', width: 640 },
-      { size: 'medium', width: 1280 },
-      { size: 'large', width: 1920 },
-      { size: 'xlarge', width: 2560 },
-      { size: 'xxlarge', width: 3840 },
+      { size: 'xs', width: 360 },
+      { size: 'sm', width: 640 },
+      { size: 'md', width: 768 },
+      { size: 'lg', width: 1024 },
+      { size: 'xl', width: 1366 },
+      { size: 'fhd', width: 1920 },
+      { size: 'qhd', width: 2560 },
+      { size: 'uhd', width: 3840 },
     ]);
   });
 
   it('should create image with w postfix', async () => {
     const filePath = await scaler.scale({
       filePath: testImagePath,
-      width: 640,
+      width: 360,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
       postfix: 'w',
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-w=${640}.webp`);
+    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-w=360.webp`);
 
     expect(filePath).toBe(expectedPath);
   });
@@ -76,7 +79,7 @@ describe('ImageScaler (integration tests)', () => {
       format: 'jpeg',
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-small.jpeg`);
+    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-sm.jpeg`);
 
     expect(filePath).toBe(expectedPath);
   });
@@ -84,13 +87,13 @@ describe('ImageScaler (integration tests)', () => {
   it('should select the correct size', async () => {
     const filePath = await scaler.scale({
       filePath: testImagePath,
-      width: 1280,
+      width: 1366,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-medium.webp`);
+    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-xl.webp`);
 
     expect(filePath).toBe(expectedPath);
   });
@@ -109,7 +112,7 @@ describe('ImageScaler (integration tests)', () => {
 
     const filePath = await customScaler.scale({
       filePath: testImagePath,
-      width: 3840,
+      width: 3440,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -123,7 +126,7 @@ describe('ImageScaler (integration tests)', () => {
   it('should resize a local image and return the buffer', async () => {
     const result = await scaler.scale({
       filePath: testImagePath,
-      width: 640,
+      width: 360,
       outputType: 'buffer',
     });
 
@@ -133,23 +136,22 @@ describe('ImageScaler (integration tests)', () => {
   it('should resize a local image and save to file', async () => {
     const result = await scaler.scale({
       filePath: testImagePath,
-      width: 640,
+      width: 360,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-small.webp`);
+    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-xs.webp`);
 
     expect(result).toBe(expectedPath);
-
     expect(fs.existsSync(expectedPath)).toBe(true);
   });
 
   it('should resize a remote image and return the buffer', async () => {
     const result = await scaler.scale({
       url: testImageURL,
-      width: 640,
+      width: 360,
       outputType: 'buffer',
     });
 
@@ -159,16 +161,15 @@ describe('ImageScaler (integration tests)', () => {
   it('should resize a remote image and save to file', async () => {
     const result = await scaler.scale({
       url: testImageURL,
-      width: 640,
+      width: 360,
       outputType: 'file',
       outputDir,
       imageName: TEST_REMOTE_IMAGE_NAME,
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_REMOTE_IMAGE_NAME}-small.webp`);
+    const expectedPath = path.join(outputDir, `${TEST_REMOTE_IMAGE_NAME}-xs.webp`);
 
     expect(result).toBe(expectedPath);
-
     expect(fs.existsSync(expectedPath)).toBe(true);
   });
 
@@ -176,22 +177,21 @@ describe('ImageScaler (integration tests)', () => {
     // First run to scale and save the image
     const firstResult = await scaler.scaleOrGetExisting({
       filePath: testImagePath,
-      width: 640,
+      width: 360,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-small.webp`);
+    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-xs.webp`);
 
     expect(firstResult).toBe(expectedPath);
-
     expect(fs.existsSync(expectedPath)).toBe(true);
 
     // Second run to get the existing image
     const secondResult = await scaler.scaleOrGetExisting({
       filePath: testImagePath,
-      width: 640,
+      width: 360,
       outputType: 'file',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -204,22 +204,21 @@ describe('ImageScaler (integration tests)', () => {
     // First run to scale and save the image
     const firstResult = await scaler.scaleOrGetExisting({
       url: testImageURL,
-      width: 640,
+      width: 360,
       outputType: 'file',
       outputDir,
       imageName: TEST_REMOTE_IMAGE_NAME,
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_REMOTE_IMAGE_NAME}-small.webp`);
+    const expectedPath = path.join(outputDir, `${TEST_REMOTE_IMAGE_NAME}-xs.webp`);
 
     expect(firstResult).toBe(expectedPath);
-
     expect(fs.existsSync(expectedPath)).toBe(true);
 
     // Second run to get the existing image
     const secondResult = await scaler.scaleOrGetExisting({
       url: testImageURL,
-      width: 640,
+      width: 360,
       outputType: 'file',
       outputDir,
       imageName: TEST_REMOTE_IMAGE_NAME,
@@ -231,23 +230,22 @@ describe('ImageScaler (integration tests)', () => {
   it('should save buffer request to file on scaleOrGetExisting', async () => {
     const firstResult = await scaler.scaleOrGetExisting({
       filePath: testImagePath,
-      width: 640,
+      width: 360,
       height: 480,
       outputType: 'buffer',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
     });
 
-    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-small.webp`);
+    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-xs.webp`);
 
     expect(firstResult).toBeInstanceOf(Buffer);
-
     expect(fs.existsSync(expectedPath)).toBe(true);
 
     // Second run to get the existing image
     const secondResult = await scaler.scaleOrGetExisting({
       filePath: testImagePath,
-      width: 640,
+      width: 360,
       height: 480,
       outputType: 'buffer',
       outputDir,
