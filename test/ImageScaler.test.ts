@@ -10,6 +10,7 @@ describe('ImageScaler (integration tests)', () => {
   const outputDir = path.join(__dirname, 'images', 'output');
   const testImageURL = `http://127.0.0.1:${TEST_SERVER_PORT}/${TEST_REMOTE_IMAGE_NAME}.webp`;
   let serverProcess: ChildProcess;
+  const scaler = new ImageScaler();
 
   beforeAll((done) => {
     if (!fs.existsSync(outputDir)) {
@@ -24,15 +25,15 @@ describe('ImageScaler (integration tests)', () => {
     });
   });
 
-  const scaler = new ImageScaler();
-
-  afterAll(() => {
+  afterEach(() => {
     const files = fs.readdirSync(outputDir);
 
     for (const file of files) {
       fs.unlinkSync(path.join(outputDir, file));
     }
+  });
 
+  afterAll(() => {
     fs.rmdirSync(outputDir);
 
     if (serverProcess) {
@@ -237,5 +238,34 @@ describe('ImageScaler (integration tests)', () => {
     });
 
     expect(secondResult).toBe(expectedPath);
+  });
+
+  it('should save buffer request to file on scaleOrGetExisting', async () => {
+    const firstResult = await scaler.scaleOrGetExisting({
+      filePath: testImagePath,
+      width: 640,
+      height: 480,
+      outputType: 'buffer',
+      outputDir,
+      imageName: TEST_LOCAL_IMAGE_NAME,
+    });
+
+    const expectedPath = path.join(outputDir, `${TEST_LOCAL_IMAGE_NAME}-small.webp`);
+
+    expect(firstResult).toBeInstanceOf(Buffer);
+
+    expect(fs.existsSync(expectedPath)).toBe(true);
+
+    // Second run to get the existing image
+    const secondResult = await scaler.scaleOrGetExisting({
+      filePath: testImagePath,
+      width: 640,
+      height: 480,
+      outputType: 'buffer',
+      outputDir,
+      imageName: TEST_LOCAL_IMAGE_NAME,
+    });
+
+    expect(secondResult).toBeInstanceOf(Buffer);
   });
 });

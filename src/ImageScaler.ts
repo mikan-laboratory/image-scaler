@@ -169,6 +169,12 @@ export class ImageScaler {
       return fs.readFileSync(outputPath) as InferScaleImageReturnType<T>;
     }
 
-    return this.scale(params);
+    const scaled = await this.scale(params);
+
+    if (params.outputType === 'buffer') {
+      await sharp(scaled).toFile(outputPath);
+    }
+
+    return scaled;
   }
 }
