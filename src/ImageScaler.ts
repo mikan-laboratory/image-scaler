@@ -138,6 +138,8 @@ export class ImageScaler {
   async scaleOrGetExisting<T extends ScaleOrGetExistingParams>(params: T): Promise<InferScaleImageReturnType<T>> {
     const { outputDir, imageName, width, outputType, format = 'webp' } = params;
 
+    if (!imageName) throw new Error('imageName should not be empty');
+
     const targetSize = this.selectSize({ width });
 
     const outputPath = this.generateImagePath({
