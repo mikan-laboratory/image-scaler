@@ -1,6 +1,9 @@
 import http from 'http-server';
 import path from 'path';
 import { TEST_SERVER_PORT } from '../util/constants';
+import { getDirname } from '../util/getDirname';
+
+const __dirname = getDirname(import.meta.url);
 
 const server = http.createServer({
   root: path.join(__dirname, '..', 'test', 'images', 'input'),
