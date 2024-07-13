@@ -28,3 +28,6 @@ tsconfig.json
 
 # Ignore Vitest configuration
 vitest.config.ts
+
+# Ignore src
+src/
