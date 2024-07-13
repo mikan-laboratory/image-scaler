@@ -4,6 +4,9 @@ import * as path from 'path';
 import { exec, ChildProcess } from 'child_process';
 import { TEST_SERVER_PORT, TEST_LOCAL_IMAGE_NAME, TEST_REMOTE_IMAGE_NAME } from '../util/constants';
 import { Sizes } from '../src/types';
+import { getDirname } from '../util/getDirname';
+
+const __dirname = getDirname(import.meta.url);
 
 describe('ImageScaler (integration tests)', () => {
   const testImagePath = path.join(__dirname, 'images', 'input', `${TEST_LOCAL_IMAGE_NAME}.png`);
@@ -12,16 +15,18 @@ describe('ImageScaler (integration tests)', () => {
   let serverProcess: ChildProcess;
   const scaler = new ImageScaler();
 
-  beforeAll((done) => {
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir);
-    }
-
-    serverProcess = exec('npm run serve');
-    serverProcess.stdout?.on('data', (data) => {
-      if (data.includes('Test image server running')) {
-        done();
+  beforeAll(() => {
+    return new Promise<void>((resolve) => {
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir);
       }
+
+      serverProcess = exec('npm run serve');
+      serverProcess.stdout?.on('data', (data) => {
+        if (data.includes('Test image server running')) {
+          resolve();
+        }
+      });
     });
   });
 
@@ -34,11 +39,17 @@ describe('ImageScaler (integration tests)', () => {
   });
 
   afterAll(() => {
-    fs.rmdirSync(outputDir);
-
-    if (serverProcess) {
-      serverProcess.kill();
-    }
+    return new Promise<void>((resolve) => {
+      if (serverProcess) {
+        serverProcess.kill('SIGTERM');
+        serverProcess.on('exit', () => {
+          fs.rmdirSync(outputDir, { recursive: true });
+          resolve();
+        });
+      } else {
+        resolve();
+      }
+    });
   });
 
   it('should initialize sizes correctly', () => {
