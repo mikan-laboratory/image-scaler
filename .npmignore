@@ -1,0 +1,30 @@
+# Ignore GitHub workflows and configurations
+.github/
+
+# Ignore Husky configuration
+.husky/
+
+# Ignore VSCode workspace settings
+.vscode/
+
+# Ignore test files
+test/
+
+# Ignore development scripts
+scripts/
+
+# Ignore utility scripts
+util/
+
+# Ignore ESLint configuration
+.eslintrc.json
+
+# Ignore Prettier configuration
+.prettierignore
+.prettierrc
+
+# Ignore TypeScript configuration
+tsconfig.json
+
+# Ignore Vitest configuration
+vitest.config.ts
