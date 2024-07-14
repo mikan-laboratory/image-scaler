@@ -242,7 +242,6 @@ describe('ImageScaler (integration tests)', () => {
     const firstResult = await scaler.scaleOrGetExisting({
       filePath: testImagePath,
       width: 360,
-      height: 480,
       outputType: 'buffer',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
@@ -257,7 +256,6 @@ describe('ImageScaler (integration tests)', () => {
     const secondResult = await scaler.scaleOrGetExisting({
       filePath: testImagePath,
       width: 360,
-      height: 480,
       outputType: 'buffer',
       outputDir,
       imageName: TEST_LOCAL_IMAGE_NAME,
