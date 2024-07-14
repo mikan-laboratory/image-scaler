@@ -92,8 +92,8 @@ Parameters:
   - Options:
     - `'size'`: Uses the size name as the postfix (e.g., `image-md.webp`)
     - `'w'`: Uses the actual width and height as the postfix (e.g., `image-w=800.webp`)
-  - This parameter allows you to customize how the scaled images are named, making it easier to identify the dimensions or size category of each image.
-    Returns:
+
+Returns:
 
 - For 'file' output: Path to the saved file
 - For 'buffer' output: Buffer containing the scaled image
@@ -108,4 +108,4 @@ Parameters:
 
 Returns:
 
-- Path to the existing or newly scaled image file
+- Same as `scale()`
