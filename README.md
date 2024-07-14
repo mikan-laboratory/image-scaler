@@ -82,7 +82,6 @@ Parameters:
 
 - `filePath` or `url`: Source of the image (local file path or remote URL)
 - `width`: Target width
-- `height`: Target height
 - `outputType`: 'file' or 'buffer'
 - `format` (optional): Output format (default: 'webp')
 - `outputDir` (required for 'file' output): Directory to save the scaled image
