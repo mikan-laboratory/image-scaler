@@ -90,7 +90,7 @@ Parameters:
 
   - Options:
     - `'size'`: Uses the size name as the postfix (e.g., `image-md.webp`)
-    - `'w'`: Uses the actual width and height as the postfix (e.g., `image-w=800.webp`)
+    - `'w'`: Uses width as the postfix (e.g., `image-w=800.webp`)
 
 Returns:
 
